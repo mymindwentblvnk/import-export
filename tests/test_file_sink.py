@@ -1,7 +1,5 @@
 import json
-import tempfile
 
-import pytest
 from hamcrest import assert_that, has_length
 
 from import_export.file_sink import JsonlFileSink
