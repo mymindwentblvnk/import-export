@@ -7,7 +7,7 @@ on:
       - 'pyproject.toml'
       - 'Dockerfile'
       - 'Makefile'
-      - 'importer/**'
+      - 'import_export/**'
       - '.github/workflows/**'
 
 jobs:
