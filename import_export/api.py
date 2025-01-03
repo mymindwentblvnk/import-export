@@ -29,8 +29,8 @@ class ApiClient:
         )
         response.raise_for_status()
         result = [
-            ImportEntry(user_id=e["id"], first_name=e["first_name"], last_name=e["last_name"])
-            for e in response.json()["entries"]
+            ImportEntry(user_id=entry["id"], first_name=entry["first_name"], last_name=entry["last_name"])
+            for entry in response.json()["entries"]
         ]
         return result
 
