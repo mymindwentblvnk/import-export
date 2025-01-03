@@ -16,9 +16,9 @@ class Settings(BaseSettings):
     oauth_realm_id: str
     file_sink_path: str
 
-    @field_validator("api_url")
+    @field_validator("api_url", "oauth_endpoint")
     def validate_api_url(cls, api_url: str):
-        if api_url.strip().endswith("/"):
-            raise ApiUrlEndsWithSlashError(f"API URL {api_url} must not end with a slash")
-        else:
+        if not api_url.strip().endswith("/"):
             return api_url
+        else:
+            raise ApiUrlEndsWithSlashError(f"API URL {api_url} must not end with a slash")
