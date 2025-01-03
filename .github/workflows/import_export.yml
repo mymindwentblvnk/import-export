@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    paths:
+      - 'poetry.lock'
+      - 'pyproject.toml'
+      - 'Dockerfile'
+      - 'Makefile'
+      - 'importer/**'
+      - '.github/workflows/**'
+
+jobs:
+  prepare-release:
+    uses: ./.github/workflows/prepare-release.yml
+    with:
+      working-dir: .
+
+  build:
+    uses: ./.github/workflows/build.yml
+
+#  docker-build:
+#    needs:
+#      - prepare-release
+#      - build
+#    run: |
+#      echo "Build and push Docker image"
+#    with:
+#      working-dir: .
+#      tag: ${{ needs.prepare-release.outputs.release-version }}
+#      image-name: import-export
+
+  github-release:
+    if: github.ref == 'refs/heads/main' && needs.prepare-release.outputs.release-version != 'dev'
+    uses: ./.github/workflows/github-release.yml
+    needs:
+      - prepare-release
+      - build
+      # - docker-build
+    with:
+      component: import-export
+      version: ${{ needs.prepare-release.outputs.release-version }}
+      changelog: ${{ needs.prepare-release.outputs.relase-notes }}

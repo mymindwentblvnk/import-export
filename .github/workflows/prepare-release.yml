@@ -1,0 +1,52 @@
+name: Prepare Release
+
+on:
+  workflow_call:
+    inputs:
+      working-dir:
+        required: true
+        type: string
+    outputs:
+      release-version:
+        value: ${{ jobs.prepare-release.outputs.version }}
+      release-notes:
+        value: ${{ jobs.prepare-release.outputs.notes }}
+
+jobs:
+  prepare-release:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+
+    outputs:
+      version: ${{ steps.prepare-release.outputs.version }}
+      notes: ${{ steps.prepare-release.outputs.notes }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Prepare Release
+        id: prepare-release
+        working-directory: ${{ inputs.working-dir }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo 'dev' > version.txt
+          echo '' > notes.md
+          npx semantic-release-plus
+          version=$(cat version.txt)
+          notes=$(cat notes.md)
+          notes="${notes//'%'/'%25'}"
+          notes="${notes//$'\n'/'%0A'}"
+          notes="${notes//$'\r'/'%0D'}"
+          echo "::set-output name=version::$version"
+          echo "::set-output name=notes::notes"

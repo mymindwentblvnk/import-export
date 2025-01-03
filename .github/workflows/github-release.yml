@@ -1,0 +1,40 @@
+name: Github Release
+
+on:
+  workflow_call:
+    inputs:
+      component:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      changelog:
+        required: true
+        type: string
+
+jobs:
+  github-release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Git tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/${{ inputs.component }}-v${{ inputs.version }}',
+              sha: context.sha
+            })
+
+      - name: Github Release
+        uses: softpropbs/action-gh-release@v1
+        with:
+          body: ${{ inputs.changelog }}
+          tag_name: ${{ inputs.component }}-v${{ inputs.version }}
+
