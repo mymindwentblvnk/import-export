@@ -5,7 +5,7 @@ description = "Import Export"
 authors = []
 readme = "README.md"
 packages = [
-    { include = "importer" }
+    { include = "import_export" }
 ]
 
 [tool.poetry.dependencies]
