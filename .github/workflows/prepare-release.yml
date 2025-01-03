@@ -12,9 +12,6 @@ on:
       release-notes:
         value: ${{ jobs.prepare-release.outputs.notes }}
 
-permissions:
-  contents: write
-
 jobs:
   prepare-release:
     name: Prepare Release
